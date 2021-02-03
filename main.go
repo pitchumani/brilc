@@ -3,10 +3,23 @@ package main
 import (
     "fmt"
     "os"
+    "io/ioutil"
+    "encoding/json"
 )
 
 func compile_file (fname string) {
     fmt.Println ("Compiling file: ", fname)
+    jfile, err := os.Open (fname)
+    if err != nil {
+        fmt.Println ("Could not open file ", fname)
+        os.Exit(1)
+    }
+    defer jfile.Close()
+    byteValue, _ := ioutil.ReadAll(jfile)
+    var program map[string]interface{}
+    json.Unmarshal(byteValue, &program)
+    functions := program["functions"].([]interface{})
+    fmt.Println("nfuncs: ", len(functions))
 }
 
 func main () {
